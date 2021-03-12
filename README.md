@@ -3,7 +3,7 @@
 
 
 # Requirements
-+ The script works with the [Infinity call center platform](https://www.infinity.ru/). Working with other software is not expected. U+1F60A
++ The script works with the [Infinity call center platform](https://www.infinity.ru/). Working with other software is not expected. &#128522;
 + Before using the app, you need to create a campaign in Infinity, understand which database table to work with.
 + In the settings of the Infinity platform (Call-center X), all permissions to access the API must be set.
 
