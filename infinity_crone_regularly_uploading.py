@@ -18,6 +18,8 @@ STAT_URL = 'http://{host}:{port}/stat/{stat_method}/'
 # today — сегодняшние записи,
 # yesterday — записи вчерашнего дня.
 DAY = 'yesterday'
+PERIOD_START = datetime.strptime('2021-11-24', '%Y-%m-%d').date()
+PERIOD_END = datetime.strptime('2021-12-05', '%Y-%m-%d').date()
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -29,18 +31,27 @@ logging.basicConfig(
 def main():
     logging.debug('Приложение запущенно')
     try:
-        correct_day = get_dates()
-        os.mkdir(correct_day)
-        data_db = getting_all_data_of_db_table()
-        data_day = choosing_one_day(data_db, correct_day)
-        for line in data_day:
-            seance, phone = line.replace('\n', '').split(', ')
-            connection = get_connection_by_seance(seance)
-            # todo
-            # описать, зачем берём connection[1]
-            if len(connection) == 2:
-                title = f'{correct_day}/{phone}.wav'
-                get_recorded_file_by_connection(connection[1], title)
+        correct_days = []
+        if PERIOD_START and PERIOD_END:
+            logging.debug('Инициализация работы с периодом')
+            one_day = PERIOD_START
+            while one_day <= PERIOD_END:
+                correct_days.append(one_day)
+                one_day += timedelta(days=1)
+        else:
+            correct_days.append(get_dates())
+        for correct_day in correct_days:
+            os.mkdir(str(correct_day))
+            data_db = getting_all_data_of_db_table()
+            data_day = choosing_one_day(data_db, correct_day)
+            for line in data_day:
+                seance, phone = line.replace('\n', '').split(', ')
+                connection = get_connection_by_seance(seance)
+                # todo
+                # описать, зачем берём connection[1]
+                if len(connection) == 2:
+                    title = f'{correct_day}/{phone}.wav'
+                    get_recorded_file_by_connection(connection[1], title)
     except Exception as e:
         message = f'Неразрешимая ошибка: {e}'
         logging.error(message)
